@@ -54,7 +54,7 @@ func (o Replacer) Replace(path string, fi os.FileInfo, err error) error {
 			fmt.Println("No match for replace expression: " + path)
 		}
 	} else {
-		fmt.Println("No match for file name: " + path)
+		//fmt.Println("No match for file name: " + path)
 	}
 
 	return nil
