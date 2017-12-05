@@ -5,8 +5,8 @@ import (
 	"github.com/urfave/cli"
 	"log"
 	"path/filepath"
-	"fit/core"
 	"encoding/json"
+	"github.com/eugeis/fit"
 )
 
 func main() {
@@ -42,17 +42,13 @@ func main() {
 					Name:  "repl",
 					Usage: "Replace with",
 				},
-				cli.StringFlag{
-					Name:  "nop",
-					Usage: "Simulation mode, no changes will be done",
-				},
 			},
 			Action: func(c *cli.Context) (err error) {
-				replacer := &core.Replacer{
+				replacer := &fit.Replacer{
 					Name:       c.String("name"),
 					Expression: c.String("expr"), Replacement: c.String("repl"),
 					Nop:        c.GlobalBool("nop")}
-				json,_ := json.Marshal(replacer)
+				json, _ := json.Marshal(replacer)
 				println(string(json))
 				err = filepath.Walk(c.String("path"), replacer.Replace)
 				if err != nil {
@@ -60,7 +56,24 @@ func main() {
 				}
 				return nil
 			},
-
+		}, {
+			Name:    "ansiToUtf8",
+			Aliases: []string{"ansi"},
+			Usage:   "encode ansi to ansi",
+			Flags: []cli.Flag{
+				cli.StringFlag{
+					Name:  "path",
+					Usage: "path of the source file",
+				},
+				cli.StringFlag{
+					Name:  "target",
+					Usage: "path of the target file",
+				},
+			},
+			Action: func(c *cli.Context) (err error) {
+				return fit.AnsiToUtf8(
+					c.String("path"), c.String("target"), c.GlobalBool("nop"))
+			},
 		},
 	}
 	err := app.Run(os.Args)
